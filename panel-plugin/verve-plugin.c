@@ -776,13 +776,13 @@ verve_plugin_history_length_changed (GtkSpinButton *spin,
 
 
 static void
-verve_plugin_ddg_changed (GtkSpinButton *spin, 
+verve_plugin_ddg_changed (GtkComboBox *box, 
                            VervePlugin *verve)
 {
   g_return_if_fail (verve != NULL);
 
   /* Update DDG setting */
-  verve_plugin_update_ddg (NULL, gtk_spin_button_get_value_as_int (spin), verve);
+  verve_plugin_update_ddg (NULL, gtk_combo_box_get_active (box), verve);
 }
 
 
@@ -933,17 +933,20 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   /* DuckDuckGo adjustment */
   adjustment = gtk_adjustment_new (verve->size, 0, 2, 1, 5, 10);
 
-  /* DuckDuckGo spin button */
-  ddg_spin = gtk_spin_button_new (GTK_ADJUSTMENT (adjustment), 1, 0);
-  gtk_widget_add_mnemonic_label (ddg_spin, ddg_label);
-  gtk_box_pack_start (GTK_BOX (hbox), ddg_spin, FALSE, TRUE, 0);
-  gtk_widget_show (ddg_spin);
+  /* DuckDuckGo combo box */
+  ddg_box = gtk_combo_box_new_text();
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(ddg_box), 0, "Never");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(ddg_box), 1, "Only when command starts with !");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(ddg_box), 2, "Always");
+  gtk_widget_add_mnemonic_label (ddg_box, ddg_label);
+  gtk_box_pack_start (GTK_BOX (hbox), ddg_box, FALSE, TRUE, 0);
+  gtk_widget_show (ddg_box);
 
   /* Assign current setting to spin button */
-  gtk_spin_button_set_value (GTK_SPIN_BUTTON (ddg_spin), verve->ddg_setting);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (ddg_box), verve->ddg_setting);
 
   /* Be notified when the user requests a different DDG setting */
-  g_signal_connect (ddg_spin, "value-changed", G_CALLBACK (verve_plugin_ddg_changed), verve);
+  g_signal_connect (ddg_box, "value-changed", G_CALLBACK (verve_plugin_ddg_changed), verve);
 
   /* Show properties dialog */
   gtk_widget_show (dialog);
