@@ -826,7 +826,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkWidget *history_length_spin;
   GtkObject *adjustment;
   GtkWidget *ddg_label;
-  GtkWidget *ddg_spin;
+  GtkWidget *ddg_box;
 
   g_return_if_fail (plugin != NULL);
   g_return_if_fail (verve != NULL);
