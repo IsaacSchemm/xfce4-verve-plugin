@@ -1,19 +1,19 @@
-Source: xfce4-verve-plugin
+Source: xfce4-verve-plugin-ddg
 Section: xfce
 Priority: optional
-Maintainer: Debian Xfce Maintainers <pkg-xfce-devel@lists.alioth.debian.org>
-Uploaders: Yves-Alexis Perez <corsac@debian.org>, Lionel Le Folgoc <mrpouit@gmail.com>
+Maintainer: Isaac Schemm <isaacschemm@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev,
  libexo-1-dev (>= 0.5.0), xfce4-panel-dev (>= 4.8.0), libpcre3-dev,
  libstartup-notification0-dev, libxml-parser-perl, libdbus-glib-1-dev,
  intltool, libxfcegui4-dev, xfce4-dev-tools, libtool, hardening-includes
 Standards-Version: 3.9.2
-Vcs-Svn: svn://svn.debian.org/pkg-xfce/goodies/trunk/xfce4-verve-plugin/
-Vcs-Browser: http://svn.debian.org/wsvn/pkg-xfce/goodies/trunk/xfce4-verve-plugin/
+Vcs-Svn: git://github.com/IsaacSchemm/xfce4-verve-plugin.git
+Vcs-Browser: https://github.com/IsaacSchemm/xfce4-verve-plugin
 
-Package: xfce4-verve-plugin
+Package: xfce4-verve-plugin-ddg
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, exo-utils
+Provides: xfce4-verve-plugin
 Description: Verve (command line) plugin for Xfce panel
  Verve plugin is a command line plugin for Xfce panel, with autocompletion
- and command history
+ and command history. This version includes DuckDuckGo support.

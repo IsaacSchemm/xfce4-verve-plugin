@@ -1,10 +1,11 @@
-This package was debianized by Yves-Alexis Perez <corsac@corsac.net> on
-Tue, 18 Apr 2006 20:32:40 +0200
+This package was debianized by Isaac Schemm <isaacschemm@gmail.com> on
+Wed, 22 Feb 2012 13:36:18 -0600
 
-It was downloaded from http://xfce-goodies.berlios.de
+It was forked from the Debian package xfce4-verve-plugin (1.0.0-1)
 
 Copyright:
 © 2006-2007 Jannis Pohlmann <jannis@xfce.org>
+© Isaac Schemm <isaacschemm@gmail.com>
 
 License:
 
