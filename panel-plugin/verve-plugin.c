@@ -820,7 +820,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_widget_show (size_label);
 
   /* Plugin size adjustment */
-  adjustment = gtk_adjustment_new (verve->size, 5, 100, 1, 5, 10);
+  adjustment = gtk_adjustment_new (verve->size, 5, 300, 1, 5, 10);
 
   /* Plugin size spin button */
   size_spin = gtk_spin_button_new (GTK_ADJUSTMENT (adjustment), 1, 0);
