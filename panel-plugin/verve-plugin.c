@@ -3,6 +3,8 @@
  *
  *  Copyright  2006-2007  Jannis Pohlmann
  *  jannis@xfce.org
+ *  DuckDuckGo support (C) 2012 Isaac Schemm
+ *  isaacschemm@gmail.com
  ****************************************************************************/
 
 /*
@@ -67,6 +69,7 @@ typedef struct
   /* Properties */ 
   gint              size;
   gint              history_length;
+  gint              ddg_setting;
 
 #ifdef HAVE_DBUS
   VerveDBusService *dbus_service;
@@ -519,6 +522,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->n_complete = 0;
   verve->size = 20;
   verve->history_length = 25;
+  verve->ddg_setting = 1;
 
   /* Connect to load-binaries signal of environment */
   g_signal_connect (G_OBJECT (verve_env_get()), "load-binaries", G_CALLBACK (verve_plugin_load_completion), verve);
@@ -628,6 +632,24 @@ verve_plugin_update_history_length (XfcePanelPlugin *plugin,
 
 
 
+static gboolean
+verve_plugin_update_ddg (XfcePanelPlugin *plugin,
+                                    gint             ddg_setting,
+                                    VervePlugin     *verve)
+{
+  g_return_val_if_fail (verve != NULL, FALSE);
+
+  /* Set internal DDG setting variable */
+  verve->ddg_setting = ddg_setting;
+
+  /* Update panel */
+  verve_ddg_set_setting (ddg_setting);
+
+  return TRUE;
+}
+
+
+
 static void
 verve_plugin_read_rc_file (XfcePanelPlugin *plugin, 
                            VervePlugin *verve)
@@ -640,6 +662,9 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
 
   /* Default number of saved history entries */
   gint    history_length = 25;
+
+  /* Default DDG setting */
+  gint    ddg_setting = 1;
 
   g_return_if_fail (plugin != NULL);
   g_return_if_fail (verve != NULL);
@@ -662,12 +687,18 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
 
       /* Read number of saved history entries */
       history_length = xfce_rc_read_int_entry (rc, "history-length", history_length);
+
+      /* Read DDG setting */
+      ddg_setting = xfce_rc_read_int_entry (rc, "ddg-setting", ddg_setting);
     
       /* Update plugin size */
       verve_plugin_update_size (NULL, size, verve);
 
       /* Update history length */
       verve_plugin_update_history_length (NULL, history_length, verve);
+
+      /* Update DDG setting */
+      verve_plugin_update_ddg (NULL, ddg_setting, verve);
       
       /* Close handle */
       xfce_rc_close (rc);
@@ -706,6 +737,9 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
 
       /* Write number of saved history entries */
       xfce_rc_write_int_entry (rc, "history-length", verve->history_length);
+
+      /* Write DDG setting */
+      xfce_rc_write_int_entry (rc, "ddg-setting", verve->ddg_setting);
     
       /* Close handle */
       xfce_rc_close (rc);
@@ -742,6 +776,18 @@ verve_plugin_history_length_changed (GtkSpinButton *spin,
 
 
 static void
+verve_plugin_ddg_changed (GtkSpinButton *spin, 
+                           VervePlugin *verve)
+{
+  g_return_if_fail (verve != NULL);
+
+  /* Update DDG setting */
+  verve_plugin_update_ddg (NULL, gtk_spin_button_get_value_as_int (spin), verve);
+}
+
+
+
+static void
 verve_plugin_response (GtkWidget *dialog, 
                        int response, 
                        VervePlugin *verve)
@@ -772,12 +818,15 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkWidget *frame;
   GtkWidget *bin1;
   GtkWidget *bin2;
+  GtkWidget *bin3;
   GtkWidget *hbox;
   GtkWidget *size_label;
   GtkWidget *size_spin;
   GtkWidget *history_length_label;
   GtkWidget *history_length_spin;
   GtkObject *adjustment;
+  GtkWidget *ddg_label;
+  GtkWidget *ddg_spin;
 
   g_return_if_fail (plugin != NULL);
   g_return_if_fail (verve != NULL);
@@ -864,6 +913,37 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
 
   /* Be notified when the user requests a different history length */
   g_signal_connect (history_length_spin, "value-changed", G_CALLBACK (verve_plugin_history_length_changed), verve);
+
+  /* Frame for DuckDuckGo settings */
+  frame = xfce_create_framebox (_("DuckDuckGo"), &bin3);
+  gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  /* DuckDuckGo container */
+  hbox = gtk_hbox_new (FALSE, 8);
+  gtk_container_add (GTK_CONTAINER (bin3), hbox);
+  gtk_widget_show (hbox);
+
+  /* DuckDuckGo label */
+  ddg_label = gtk_label_new (_("Use DuckDuckGo for commands beginning in \"!\":"));
+  gtk_box_pack_start (GTK_BOX (hbox), ddg_label, FALSE, TRUE, 0);
+  gtk_widget_show (ddg_label);
+
+  /* DuckDuckGo adjustment */
+  adjustment = gtk_adjustment_new (verve->size, 0, 2, 1, 5, 10);
+
+  /* DuckDuckGo spin button */
+  ddg_spin = gtk_spin_button_new (GTK_ADJUSTMENT (adjustment), 1, 0);
+  gtk_widget_add_mnemonic_label (ddg_spin, ddg_label);
+  gtk_box_pack_start (GTK_BOX (hbox), ddg_spin, FALSE, TRUE, 0);
+  gtk_widget_show (ddg_spin);
+
+  /* Assign current setting to spin button */
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (ddg_spin), verve->ddg_setting);
+
+  /* Be notified when the user requests a different DDG setting */
+  g_signal_connect (ddg_spin, "value-changed", G_CALLBACK (verve_plugin_ddg_changed), verve);
 
   /* Show properties dialog */
   gtk_widget_show (dialog);

@@ -27,6 +27,8 @@
 #include "verve-env.h"
 #include "verve-history.h"
 
+void verve_ddg_set_setting (gint setting);
+
 /* Init / Shutdown Verve */
 void verve_init (void);
 void verve_shutdown (void);

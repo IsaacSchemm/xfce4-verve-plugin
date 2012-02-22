@@ -3,6 +3,8 @@
  *
  *  Copyright  2006-2007  Jannis Pohlmann
  *  jannis@xfce.org
+ *  DuckDuckGo support (C) 2012 Isaac Schemm
+ *  isaacschemm@gmail.com
  ****************************************************************************/
 
 /*
@@ -49,8 +51,15 @@ static gboolean verve_is_directory (const gchar *str);
 #define MATCH_URL2  "^(www|ftp)[" HOSTCHARS "]*\\.[" HOSTCHARS ".]+(:[0-9]+)?" \
                     "(/[-A-Za-z0-9_$.+!*(),;:@&=?/~#%]*[^]'.}>) \t\r\n,\\\"])?/?$"
 #define MATCH_EMAIL "^(mailto:)?[a-z0-9][a-z0-9.-]*@[a-z0-9][a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*)+$"
+#define MATCH_BANG  "^!"
 
+static gint ddg_setting = 1;
 
+void
+verve_ddg_set_setting (gint setting)
+{
+  ddg_setting = setting;
+}
 
 /*********************************************************************
  *
@@ -163,11 +172,21 @@ verve_execute (const gchar *input,
   }
   else
   {
-    /* Run command using the xfterm4 wrapper if the terminal flag was set */
-    if (G_UNLIKELY (terminal))
-      command = g_strconcat ("xfterm4 -e ", input, NULL);
+    if ((ddg_setting == 2) || ((ddg_setting == 1) && (verve_is_bang (input))))
+    {
+      /* Replace spaces with +s for exo-open - the search engine will understand these */
+      g_strdelimit(input, " ", '+');
+      /* Launch DuckDuckGo */
+      command = g_strconcat ("exo-open https://duckduckgo.com/?q=", input, NULL);
+    }
     else
-      command = g_strdup (input);
+    {
+      /* Run command using the xfterm4 wrapper if the terminal flag was set */
+      if (G_UNLIKELY (terminal))
+        command = g_strconcat ("xfterm4 -e ", input, NULL);
+      else
+        command = g_strdup (input);
+    }
   }
     
   /* Try to execute the exo-open command */
@@ -275,6 +294,42 @@ verve_is_directory (const gchar *str)
     return TRUE;
   else
     return FALSE;
+}
+
+
+
+gboolean
+verve_is_bang (const gchar *str)
+{
+  GString     *string = g_string_new (str);
+  pcre        *pattern;
+  const gchar *error;
+  int          error_offset;
+  int          ovector[30];
+  gboolean     success = FALSE;
+
+  /* Compile pattern */
+  pattern = pcre_compile (MATCH_BANG, 0, &error, &error_offset, NULL);
+
+  /* Test whether the string matches this pattern */
+  if (pcre_exec (pattern, NULL, string->str, string->len, 0, 0, ovector, 30) >= 0)
+    success = TRUE;
+
+  /* Free pattern and string */
+  pcre_free (pattern);
+  g_string_free (string, TRUE);
+
+  if (success)
+    {
+      /* Don't search DuckDuckGo for this query is there is an executable by this name. */
+      if (g_find_program_in_path (str))
+      {
+        success = FALSE;
+      }
+    }
+
+  /* Return true if string matched the first pattern and there is no matching executable */
+  return success;
 }
 
 
