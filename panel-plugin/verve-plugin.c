@@ -946,7 +946,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_combo_box_set_active (GTK_COMBO_BOX (ddg_box), verve->ddg_setting);
 
   /* Be notified when the user requests a different DDG setting */
-  g_signal_connect (ddg_box, "value-changed", G_CALLBACK (verve_plugin_ddg_changed), verve);
+  g_signal_connect (GTK_COMBO(ddg_box)->entry, "changed", G_CALLBACK (verve_plugin_ddg_changed), verve);
 
   /* Show properties dialog */
   gtk_widget_show (dialog);
