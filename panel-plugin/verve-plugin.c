@@ -921,12 +921,12 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_widget_show (frame);
 
   /* DuckDuckGo container */
-  hbox = gtk_hbox_new (FALSE, 8);
+  hbox = gtk_vbox_new (FALSE, 8);
   gtk_container_add (GTK_CONTAINER (bin3), hbox);
   gtk_widget_show (hbox);
 
   /* DuckDuckGo label */
-  ddg_label = gtk_label_new (_("Use DuckDuckGo for commands beginning in \"!\":"));
+  ddg_label = gtk_label_new (_("Use DuckDuckGo:"));
   gtk_box_pack_start (GTK_BOX (hbox), ddg_label, FALSE, TRUE, 0);
   gtk_widget_show (ddg_label);
 
