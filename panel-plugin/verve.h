@@ -28,6 +28,7 @@
 #include "verve-history.h"
 
 void verve_ddg_set_setting (gint setting);
+void verve_set_search_engine (gint engine);
 
 /* Init / Shutdown Verve */
 void verve_init (void);

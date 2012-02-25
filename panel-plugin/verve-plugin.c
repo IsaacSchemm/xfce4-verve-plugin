@@ -70,6 +70,7 @@ typedef struct
   gint              size;
   gint              history_length;
   gint              ddg_setting;
+  gint              search_engine;
 
 #ifdef HAVE_DBUS
   VerveDBusService *dbus_service;
@@ -523,6 +524,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->size = 20;
   verve->history_length = 25;
   verve->ddg_setting = 1;
+  verve->search_engine = 0;
 
   /* Connect to load-binaries signal of environment */
   g_signal_connect (G_OBJECT (verve_env_get()), "load-binaries", G_CALLBACK (verve_plugin_load_completion), verve);
@@ -650,6 +652,24 @@ verve_plugin_update_ddg (XfcePanelPlugin *plugin,
 
 
 
+static gboolean
+verve_plugin_update_search_engine (XfcePanelPlugin *plugin,
+                                    gint             search_engine,
+                                    VervePlugin     *verve)
+{
+  g_return_val_if_fail (verve != NULL, FALSE);
+
+  /* Set internal search engine ID variable */
+  verve->search_engine = search_engine;
+
+  /* Update panel */
+  verve_set_search_engine (search_engine);
+
+  return TRUE;
+}
+
+
+
 static void
 verve_plugin_read_rc_file (XfcePanelPlugin *plugin, 
                            VervePlugin *verve)
@@ -665,6 +685,9 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
 
   /* Default DDG setting */
   gint    ddg_setting = 1;
+
+  /* Default search engine ID */
+  gint    search_engine = 0;
 
   g_return_if_fail (plugin != NULL);
   g_return_if_fail (verve != NULL);
@@ -690,6 +713,9 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
 
       /* Read DDG setting */
       ddg_setting = xfce_rc_read_int_entry (rc, "ddg-setting", ddg_setting);
+
+      /* Read search engine ID */
+      search_engine = xfce_rc_read_int_entry (rc, "search-engine", search_engine);
     
       /* Update plugin size */
       verve_plugin_update_size (NULL, size, verve);
@@ -699,6 +725,9 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
 
       /* Update DDG setting */
       verve_plugin_update_ddg (NULL, ddg_setting, verve);
+
+      /* Update search engine ID */
+      verve_plugin_update_search_engine (NULL, search_engine, verve);
       
       /* Close handle */
       xfce_rc_close (rc);
@@ -740,6 +769,9 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
 
       /* Write DDG setting */
       xfce_rc_write_int_entry (rc, "ddg-setting", verve->ddg_setting);
+
+      /* Write search engine ID */
+      xfce_rc_write_int_entry (rc, "search-engine", verve->search_engine);
     
       /* Close handle */
       xfce_rc_close (rc);
@@ -788,6 +820,18 @@ verve_plugin_ddg_changed (GtkComboBox *box,
 
 
 static void
+verve_plugin_search_engine_changed (GtkComboBox *box, 
+                           VervePlugin *verve)
+{
+  g_return_if_fail (verve != NULL);
+
+  /* Update search engine ID */
+  verve_plugin_update_search_engine (NULL, gtk_combo_box_get_active(box), verve);
+}
+
+
+
+static void
 verve_plugin_response (GtkWidget *dialog, 
                        int response, 
                        VervePlugin *verve)
@@ -827,6 +871,8 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkObject *adjustment;
   GtkWidget *ddg_label;
   GtkWidget *ddg_box;
+  GtkWidget *engine_label;
+  GtkWidget *engine_box;
 
   g_return_if_fail (plugin != NULL);
   g_return_if_fail (verve != NULL);
@@ -948,6 +994,31 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
 
   /* Be notified when the user requests a different DDG setting */
   g_signal_connect (ddg_box, "changed", G_CALLBACK (verve_plugin_ddg_changed), verve);
+
+  /* Seach engine selection label */
+  engine_label = gtk_label_new (_("Search engine:"));
+  gtk_misc_set_alignment(engine_label, 0, 0.5); // align to the left
+  gtk_box_pack_start (GTK_BOX (hbox), engine_label, FALSE, TRUE, 0);
+  gtk_widget_show (engine_label);
+
+  /* Seach engine selection adjustment - change this to change size of list */
+  adjustment = gtk_adjustment_new (verve->size, 0, 2, 1, 5, 10);
+
+  /* Seach engine selection combo box */
+  engine_box = gtk_combo_box_new_text();
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 0, "DuckDuckGo (SSL)");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 1, "Google (SSL)");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 2, "Bing");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 3, "Wolfram|Alpha");
+  gtk_widget_add_mnemonic_label (engine_box, engine_label);
+  gtk_box_pack_start (GTK_BOX (hbox), engine_box, FALSE, TRUE, 0);
+  gtk_widget_show (engine_box);
+
+  /* Assign current setting to search engine selection box */
+  gtk_combo_box_set_active (GTK_COMBO_BOX (engine_box), verve->search_engine);
+
+  /* Be notified when the user requests a different search engine setting */
+  g_signal_connect (engine_box, "changed", G_CALLBACK (verve_plugin_search_engine_changed), verve);
 
   /* Show properties dialog */
   gtk_widget_show (dialog);

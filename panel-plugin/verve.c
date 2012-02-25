@@ -54,11 +54,18 @@ static gboolean verve_is_directory (const gchar *str);
 #define MATCH_BANG  "^!"
 
 static gint ddg_setting = 1;
+static gint search_engine = 0;
 
 void
 verve_ddg_set_setting (gint setting)
 {
   ddg_setting = setting;
+}
+
+void
+verve_set_search_engine (gint engine)
+{
+  search_engine = engine;
 }
 
 /*********************************************************************
