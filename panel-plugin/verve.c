@@ -55,6 +55,7 @@ static gboolean verve_is_directory (const gchar *str);
 
 static gint ddg_setting = 1;
 static gint search_engine = 0;
+static char *engine_array[4] = {"https://duckduckgo.com/?q=", "https://www.google.com/search?q=", "http://www.bing.com/search?q=", "http://www.wolframalpha.com/input/?i="};
 
 void
 verve_ddg_set_setting (gint setting)
@@ -179,20 +180,30 @@ verve_execute (const gchar *input,
   }
   else
   {
-    if ((ddg_setting == 2) || ((ddg_setting == 1) && (verve_is_bang (input))))
+    if ((ddg_setting != 0) && verve_is_bang (input))
     {
       /* Replace spaces with +s for exo-open - the search engine will understand these */
       g_strdelimit(input, " ", '+');
       /* Launch DuckDuckGo */
-      command = g_strconcat ("exo-open https://duckduckgo.com/?q=", input, NULL);
+      command = g_strconcat ("exo-open ", engine_array[search_engine], input, NULL);
     }
     else
     {
-      /* Run command using the xfterm4 wrapper if the terminal flag was set */
-      if (G_UNLIKELY (terminal))
-        command = g_strconcat ("xfterm4 -e ", input, NULL);
+      if (ddg_setting == 2)
+      {
+        /* Replace spaces with +s for exo-open - the search engine will understand these */
+        g_strdelimit(input, " ", '+');
+        /* Launch default search engine */
+        command = g_strconcat ("exo-open ", engine_array[search_engine], input, NULL);
+      }
       else
-        command = g_strdup (input);
+      {
+        /* Run command using the xfterm4 wrapper if the terminal flag was set */
+        if (G_UNLIKELY (terminal))
+          command = g_strconcat ("xfterm4 -e ", input, NULL);
+        else
+          command = g_strdup (input);
+      }
     }
   }
     
