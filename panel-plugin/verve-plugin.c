@@ -927,6 +927,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
 
   /* DuckDuckGo label */
   ddg_label = gtk_label_new (_("Use DuckDuckGo:"));
+  gtk_misc_set_alignment(ddg_label, 0, 0.5); // align to the left
   gtk_box_pack_start (GTK_BOX (hbox), ddg_label, FALSE, TRUE, 0);
   gtk_widget_show (ddg_label);
 
