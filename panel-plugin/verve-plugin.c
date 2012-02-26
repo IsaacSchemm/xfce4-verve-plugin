@@ -996,10 +996,11 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   /* Seach engine selection combo box */
   engine_box = gtk_combo_box_new_text();
   gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 0, "None");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 1, "DuckDuckGo (SSL)");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 2, "Google (SSL)");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 3, "Bing");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 4, "Wolfram|Alpha");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 1, "DuckDuckGo (!ddg)");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 2, "Google (!g)");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 3, "Bing (!b)");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 4, "Wolfram|Alpha (!wa)");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 5, "Debian man pages (!dman)");
   gtk_widget_add_mnemonic_label (engine_box, engine_label);
   gtk_box_pack_start (GTK_BOX (hbox), engine_box, FALSE, TRUE, 0);
   gtk_widget_show (engine_box);

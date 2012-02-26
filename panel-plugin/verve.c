@@ -55,7 +55,7 @@ static gboolean verve_is_directory (const gchar *str);
 
 static gboolean use_bang = TRUE;
 static gint search_engine = 0;
-static char *engine_array[5] = {"", "https://duckduckgo.com/?q=", "https://www.google.com/search?q=", "http://www.bing.com/search?q=", "http://www.wolframalpha.com/input/?i="};
+static char *engine_array[6] = {"", "https://duckduckgo.com/?q=", "https://www.google.com/search?q=", "http://www.bing.com/search?q=", "http://www.wolframalpha.com/input/?i=", "http://manpages.debian.net/cgi-bin/man.cgi?query="};
 
 void
 verve_set_bang_setting (gboolean bang)
