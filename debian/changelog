@@ -1,6 +1,7 @@
 xfce4-verve-plugin-ddg (1.0.1) unstable; urgency=low
 
-  * Not a "real" changelog - see the github repository for history.
+  * Initial package build with DuckDuckGo support
+  * Raised max size from 100 to 300
 
  -- Isaac Schemm <isaacschemm@gmail.com>  Wed, 22 Feb 2012 13:36:18 -0600
 
