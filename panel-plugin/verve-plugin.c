@@ -988,14 +988,14 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   g_signal_connect (bang_button, "toggled", G_CALLBACK (verve_plugin_bang_changed), verve);
 
   /* Seach engine selection label */
-  engine_label = gtk_label_new (_("Search engine:"));
+  engine_label = gtk_label_new (_("Use a search engine:"));
   gtk_misc_set_alignment(engine_label, 0, 0.5); // align to the left
   gtk_box_pack_start (GTK_BOX (hbox), engine_label, FALSE, TRUE, 0);
   gtk_widget_show (engine_label);
 
   /* Seach engine selection combo box */
   engine_box = gtk_combo_box_new_text();
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 0, "None");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 0, "No; launch local commands");
   gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 1, "DuckDuckGo (!ddg)");
   gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 2, "Google (!g)");
   gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 3, "Bing (!b)");
