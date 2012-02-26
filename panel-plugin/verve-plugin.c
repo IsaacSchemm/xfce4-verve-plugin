@@ -684,7 +684,7 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
   gint    history_length = 25;
 
   /* Default !bang setting */
-  gint    use_bang = TRUE;
+  gboolean use_bang = TRUE;
 
   /* Default search engine ID */
   gint    search_engine = 0;
@@ -768,7 +768,7 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
       xfce_rc_write_int_entry (rc, "history-length", verve->history_length);
 
       /* Write !bang setting */
-      xfce_rc_write_int_entry (rc, "use-bang", verve->use_bang);
+      xfce_rc_write_bool_entry (rc, "use-bang", verve->use_bang);
 
       /* Write search engine ID */
       xfce_rc_write_int_entry (rc, "search-engine", verve->search_engine);
