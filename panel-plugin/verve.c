@@ -53,14 +53,14 @@ static gboolean verve_is_directory (const gchar *str);
 #define MATCH_EMAIL "^(mailto:)?[a-z0-9][a-z0-9.-]*@[a-z0-9][a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*)+$"
 #define MATCH_BANG  "^!"
 
-static gint ddg_setting = 1;
+static gboolean use_bang = TRUE;
 static gint search_engine = 0;
-static char *engine_array[4] = {"https://duckduckgo.com/?q=", "https://www.google.com/search?q=", "http://www.bing.com/search?q=", "http://www.wolframalpha.com/input/?i="};
+static char *engine_array[5] = {"", "https://duckduckgo.com/?q=", "https://www.google.com/search?q=", "http://www.bing.com/search?q=", "http://www.wolframalpha.com/input/?i="};
 
 void
-verve_ddg_set_setting (gint setting)
+verve_set_bang_setting (gboolean bang)
 {
-  ddg_setting = setting;
+  use_bang = bang;
 }
 
 void
@@ -180,14 +180,14 @@ verve_execute (const gchar *input,
   }
   else
   {
-    if ((ddg_setting != 0) && verve_is_bang (input))
+    if (use_bang && verve_is_bang (input))
     {
       /* Launch DuckDuckGo */
-      command = g_strconcat ("verve-search-launcher ", engine_array[search_engine], input, NULL);
+      command = g_strconcat ("verve-search-launcher https://duckduckgo.com/?q=", input, NULL);
     }
     else
     {
-      if (ddg_setting == 2)
+      if (search_engine != 0)
       {
         /* Launch default search engine */
         command = g_strconcat ("verve-search-launcher ", engine_array[search_engine], input, NULL);

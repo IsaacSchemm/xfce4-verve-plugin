@@ -69,7 +69,7 @@ typedef struct
   /* Properties */ 
   gint              size;
   gint              history_length;
-  gint              ddg_setting;
+  gboolean          use_bang;
   gint              search_engine;
 
 #ifdef HAVE_DBUS
@@ -523,7 +523,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->n_complete = 0;
   verve->size = 20;
   verve->history_length = 25;
-  verve->ddg_setting = 1;
+  verve->use_bang = TRUE;
   verve->search_engine = 0;
 
   /* Connect to load-binaries signal of environment */
@@ -635,17 +635,17 @@ verve_plugin_update_history_length (XfcePanelPlugin *plugin,
 
 
 static gboolean
-verve_plugin_update_ddg (XfcePanelPlugin *plugin,
-                                    gint             ddg_setting,
+verve_plugin_update_bang (XfcePanelPlugin *plugin,
+                                    gboolean         use_bang,
                                     VervePlugin     *verve)
 {
   g_return_val_if_fail (verve != NULL, FALSE);
 
-  /* Set internal DDG setting variable */
-  verve->ddg_setting = ddg_setting;
+  /* Set internal !bang setting variable */
+  verve->use_bang = use_bang;
 
   /* Update panel */
-  verve_ddg_set_setting (ddg_setting);
+  verve_set_bang_setting (use_bang);
 
   return TRUE;
 }
@@ -683,8 +683,8 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
   /* Default number of saved history entries */
   gint    history_length = 25;
 
-  /* Default DDG setting */
-  gint    ddg_setting = 1;
+  /* Default !bang setting */
+  gint    use_bang = TRUE;
 
   /* Default search engine ID */
   gint    search_engine = 0;
@@ -711,8 +711,8 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       /* Read number of saved history entries */
       history_length = xfce_rc_read_int_entry (rc, "history-length", history_length);
 
-      /* Read DDG setting */
-      ddg_setting = xfce_rc_read_int_entry (rc, "ddg-setting", ddg_setting);
+      /* Read !bang setting */
+      use_bang = xfce_rc_read_bool_entry (rc, "use-bang", use_bang);
 
       /* Read search engine ID */
       search_engine = xfce_rc_read_int_entry (rc, "search-engine", search_engine);
@@ -723,8 +723,8 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       /* Update history length */
       verve_plugin_update_history_length (NULL, history_length, verve);
 
-      /* Update DDG setting */
-      verve_plugin_update_ddg (NULL, ddg_setting, verve);
+      /* Update !bang setting */
+      verve_plugin_update_bang (NULL, use_bang, verve);
 
       /* Update search engine ID */
       verve_plugin_update_search_engine (NULL, search_engine, verve);
@@ -767,8 +767,8 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
       /* Write number of saved history entries */
       xfce_rc_write_int_entry (rc, "history-length", verve->history_length);
 
-      /* Write DDG setting */
-      xfce_rc_write_int_entry (rc, "ddg-setting", verve->ddg_setting);
+      /* Write !bang setting */
+      xfce_rc_write_int_entry (rc, "use-bang", verve->use_bang);
 
       /* Write search engine ID */
       xfce_rc_write_int_entry (rc, "search-engine", verve->search_engine);
@@ -808,13 +808,13 @@ verve_plugin_history_length_changed (GtkSpinButton *spin,
 
 
 static void
-verve_plugin_ddg_changed (GtkComboBox *box, 
+verve_plugin_bang_changed (GtkToggleButton *button, 
                            VervePlugin *verve)
 {
   g_return_if_fail (verve != NULL);
 
-  /* Update DDG setting */
-  verve_plugin_update_ddg (NULL, gtk_combo_box_get_active(box), verve);
+  /* Update !bang setting */
+  verve_plugin_update_bang (NULL, gtk_toggle_button_get_active(button), verve);
 }
 
 
@@ -869,8 +869,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkWidget *history_length_label;
   GtkWidget *history_length_spin;
   GtkObject *adjustment;
-  GtkWidget *ddg_label;
-  GtkWidget *ddg_box;
+  GtkWidget *bang_button;
   GtkWidget *engine_label;
   GtkWidget *engine_box;
 
@@ -971,29 +970,22 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_container_add (GTK_CONTAINER (bin3), hbox);
   gtk_widget_show (hbox);
 
-  /* DuckDuckGo label */
-  ddg_label = gtk_label_new (_("Use DuckDuckGo:"));
-  gtk_misc_set_alignment(ddg_label, 0, 0.5); // align to the left
-  gtk_box_pack_start (GTK_BOX (hbox), ddg_label, FALSE, TRUE, 0);
-  gtk_widget_show (ddg_label);
+//  /* DuckDuckGo label */
+//  ddg_label = gtk_label_new (_("Use DuckDuckGo:"));
+//  gtk_misc_set_alignment(ddg_label, 0, 0.5); // align to the left
+//  gtk_box_pack_start (GTK_BOX (hbox), ddg_label, FALSE, TRUE, 0);
+//  gtk_widget_show (ddg_label);
 
-  /* DuckDuckGo adjustment */
-  adjustment = gtk_adjustment_new (verve->size, 0, 2, 1, 5, 10);
+  /* !bang check box */
+  bang_button = gtk_check_button_new_with_label("Use DuckDuckGo when command starts with !");
+  gtk_box_pack_start (GTK_BOX (hbox), bang_button, FALSE, TRUE, 0);
+  gtk_widget_show (bang_button);
 
-  /* DuckDuckGo combo box */
-  ddg_box = gtk_combo_box_new_text();
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(ddg_box), 0, "Never");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(ddg_box), 1, "Only when command starts with !");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(ddg_box), 2, "Always");
-  gtk_widget_add_mnemonic_label (ddg_box, ddg_label);
-  gtk_box_pack_start (GTK_BOX (hbox), ddg_box, FALSE, TRUE, 0);
-  gtk_widget_show (ddg_box);
+  /* Assign current setting to !bang check box */
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bang_button), verve->use_bang);
 
-  /* Assign current setting to DDG box */
-  gtk_combo_box_set_active (GTK_COMBO_BOX (ddg_box), verve->ddg_setting);
-
-  /* Be notified when the user requests a different DDG setting */
-  g_signal_connect (ddg_box, "changed", G_CALLBACK (verve_plugin_ddg_changed), verve);
+  /* Be notified when the user requests a different !bang setting */
+  g_signal_connect (bang_button, "toggled", G_CALLBACK (verve_plugin_bang_changed), verve);
 
   /* Seach engine selection label */
   engine_label = gtk_label_new (_("Search engine:"));
@@ -1001,15 +993,13 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_box_pack_start (GTK_BOX (hbox), engine_label, FALSE, TRUE, 0);
   gtk_widget_show (engine_label);
 
-  /* Seach engine selection adjustment - change this to change size of list */
-  adjustment = gtk_adjustment_new (verve->size, 0, 2, 1, 5, 10);
-
   /* Seach engine selection combo box */
   engine_box = gtk_combo_box_new_text();
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 0, "DuckDuckGo (SSL)");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 1, "Google (SSL)");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 2, "Bing");
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 3, "Wolfram|Alpha");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 0, "None");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 1, "DuckDuckGo (SSL)");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 2, "Google (SSL)");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 3, "Bing");
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(engine_box), 4, "Wolfram|Alpha");
   gtk_widget_add_mnemonic_label (engine_box, engine_label);
   gtk_box_pack_start (GTK_BOX (hbox), engine_box, FALSE, TRUE, 0);
   gtk_widget_show (engine_box);

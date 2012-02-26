@@ -3,6 +3,8 @@
  *
  *  Copyright  2007  Jannis Pohlmann
  *  jannis@xfce.org
+ *  DuckDuckGo support (C) 2012 Isaac Schemm
+ *  isaacschemm@gmail.com
  ****************************************************************************/
 
 /*
@@ -27,7 +29,7 @@
 #include "verve-env.h"
 #include "verve-history.h"
 
-void verve_ddg_set_setting (gint setting);
+void verve_set_bang_setting (gboolean bang);
 void verve_set_search_engine (gint engine);
 
 /* Init / Shutdown Verve */
