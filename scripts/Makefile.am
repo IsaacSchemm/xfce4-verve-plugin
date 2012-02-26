@@ -1,5 +1,7 @@
 if HAVE_DBUS
 
+bin_SCRIPTS = verve-search-launcher
+
 bin_PROGRAMS = verve-focus
 
 verve_focus_SOURCES = 							\

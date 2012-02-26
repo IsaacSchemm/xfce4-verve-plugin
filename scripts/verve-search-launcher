@@ -1,0 +1,3 @@
+#!/bin/sh
+exo-open $(echo "$*" | sed -e 's/+/%2B/g' -e 's/ /+/g')
+

@@ -182,19 +182,15 @@ verve_execute (const gchar *input,
   {
     if ((ddg_setting != 0) && verve_is_bang (input))
     {
-      /* Replace spaces with +s for exo-open - the search engine will understand these */
-      g_strdelimit(input, " ", '+');
       /* Launch DuckDuckGo */
-      command = g_strconcat ("exo-open ", engine_array[search_engine], input, NULL);
+      command = g_strconcat ("verve-search-launcher ", engine_array[search_engine], input, NULL);
     }
     else
     {
       if (ddg_setting == 2)
       {
-        /* Replace spaces with +s for exo-open - the search engine will understand these */
-        g_strdelimit(input, " ", '+');
         /* Launch default search engine */
-        command = g_strconcat ("exo-open ", engine_array[search_engine], input, NULL);
+        command = g_strconcat ("verve-search-launcher ", engine_array[search_engine], input, NULL);
       }
       else
       {
