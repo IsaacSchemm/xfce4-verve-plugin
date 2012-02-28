@@ -55,7 +55,7 @@ static gboolean verve_is_directory (const gchar *str);
 
 static gboolean use_bang = TRUE;
 static gint search_engine = 0;
-static char *engine_array[6] = {"", "https://duckduckgo.com/?q=", "https://www.google.com/search?q=", "http://www.bing.com/search?q=", "http://www.wolframalpha.com/input/?i=", "http://manpages.debian.net/cgi-bin/man.cgi?query="};
+GHashTable* engines; // a hash map to get a search engine URL using its ID
 
 void
 verve_set_bang_setting (gboolean bang)
@@ -84,6 +84,14 @@ verve_init (void)
 {
   /* Init history database */
   verve_history_init ();
+
+  /* Populate search engine hash map */
+  engines = g_hash_table_new_full(NULL, NULL, NULL, g_free);
+  g_hash_table_replace(engines, 1, "https://duckduckgo.com/?q=");
+  g_hash_table_replace(engines, 2, "https://www.google.com/search?q=");
+  g_hash_table_replace(engines, 3, "http://www.bing.com/search?q=");
+  g_hash_table_replace(engines, 4, "http://www.wolframalpha.com/input/?i=");
+  g_hash_table_replace(engines, 5, "http://manpages.debian.net/cgi-bin/man.cgi?query=");
 }
 
 
@@ -93,6 +101,9 @@ verve_shutdown (void)
 {
   /* Free history database */
   verve_history_shutdown ();
+
+  /* Depopulate hash map */
+  g_hash_table_destroy(engines);
 
   /* Shutdown environment */
   verve_env_shutdown ();
@@ -190,7 +201,7 @@ verve_execute (const gchar *input,
       if (search_engine != 0)
       {
         /* Launch default search engine */
-        command = g_strconcat ("verve-search-launcher ", engine_array[search_engine], input, NULL);
+        command = g_strconcat ("verve-search-launcher ", g_hash_table_lookup(engines, search_engine), input, NULL);
       }
       else
       {
