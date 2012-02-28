@@ -87,11 +87,12 @@ verve_init (void)
 
   /* Populate search engine hash map */
   engines = g_hash_table_new_full(NULL, NULL, NULL, g_free);
-  g_hash_table_replace(engines, 1, "https://duckduckgo.com/?q=");
-  g_hash_table_replace(engines, 2, "https://www.google.com/search?q=");
-  g_hash_table_replace(engines, 3, "http://www.bing.com/search?q=");
-  g_hash_table_replace(engines, 4, "http://www.wolframalpha.com/input/?i=");
-  g_hash_table_replace(engines, 5, "http://manpages.debian.net/cgi-bin/man.cgi?query=");
+  g_hash_table_replace(engines,  1667375360, "https://duckduckgo.com/?q=");
+  g_hash_table_replace(engines, -1822996848, "https://www.google.com/search?q=");
+  g_hash_table_replace(engines,  2002029412, "http://www.bing.com/search?q=");
+  g_hash_table_replace(engines, -2140183184, "https://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=");
+  g_hash_table_replace(engines,  1140400801, "http://www.wolframalpha.com/input/?i=");
+  g_hash_table_replace(engines, -1091169193, "http://manpages.debian.net/cgi-bin/man.cgi?query=");
 }
 
 
@@ -198,10 +199,11 @@ verve_execute (const gchar *input,
     }
     else
     {
-      if (search_engine != 0)
+      gpointer result = g_hash_table_lookup(engines, search_engine);
+      if (result != NULL)
       {
         /* Launch default search engine */
-        command = g_strconcat ("verve-search-launcher ", g_hash_table_lookup(engines, search_engine), input, NULL);
+        command = g_strconcat ("verve-search-launcher ", result, input, NULL);
       }
       else
       {
