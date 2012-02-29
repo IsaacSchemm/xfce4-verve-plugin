@@ -1,5 +1,7 @@
 @SET_MAKE@
 
+dist_sysconf_DATA = verve-plugin-engines.conf
+
 SUBDIRS =								\
 	panel-plugin							\
 	scripts								\
@@ -29,3 +31,4 @@ DISTCLEANFILES =							\
 	intltool-extract						\
 	intltool-merge							\
 	intltool-update
+

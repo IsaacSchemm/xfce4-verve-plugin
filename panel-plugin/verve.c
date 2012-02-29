@@ -87,12 +87,17 @@ verve_init (void)
 
   /* Populate search engine hash map */
   engines = g_hash_table_new_full(NULL, NULL, NULL, g_free);
-  g_hash_table_replace(engines,  1667375360, "https://duckduckgo.com/?q=");
-  g_hash_table_replace(engines, -1822996848, "https://www.google.com/search?hl=LANGUAGE&q=");
-  g_hash_table_replace(engines,  2002029412, "http://www.bing.com/search?cc=LANGUAGE&q=");
-  g_hash_table_replace(engines, -2140183184, "https://LANGUAGE.wikipedia.org/w/index.php?title=Special%3ASearch&search=");
-  g_hash_table_replace(engines,  1140400801, "http://www.wolframalpha.com/input/?i=");
-  g_hash_table_replace(engines, -1091169193, "http://manpages.debian.net/cgi-bin/man.cgi?query=");
+  GKeyFile* keyfile = g_key_file_new();
+  g_key_file_load_from_file(keyfile, "/etc/verve-plugin-engines.conf", 0, NULL);
+  gchar** groups = g_key_file_get_groups(keyfile, NULL);
+  gint i;
+  for (i=0; groups != NULL && groups[i] != NULL; ++i) {
+    gchar* url = g_key_file_get_string(keyfile, groups[i], "url", NULL);
+    gint id = g_key_file_get_integer(keyfile, groups[i], "id", NULL);
+    g_printf("%s: URL %s, ID %i\n", groups[i], url, id);
+    g_hash_table_replace(engines,  id, url);
+  }
+  g_key_file_free(keyfile);
 }
 
 
