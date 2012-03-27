@@ -1,3 +1,9 @@
+xfce4-verve-plugin-ddg (1.0.2) oneiric; urgency=low
+
+  * Uploaded to PPA
+
+ -- Isaac Schemm <isaacschemm@gmail.com>  Tue, 27 Mar 2012 17:50:48 -0500
+
 xfce4-verve-plugin-ddg (1.0.1) unstable; urgency=low
 
   * Initial package build with DuckDuckGo support
