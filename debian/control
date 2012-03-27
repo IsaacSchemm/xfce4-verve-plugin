@@ -13,6 +13,8 @@ Vcs-Browser: https://github.com/IsaacSchemm/xfce4-verve-plugin
 Package: xfce4-verve-plugin-ddg
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, exo-utils
+Replaces: xfce4-verve-plugin
+Conflicts: xfce4-verve-plugin
 Provides: xfce4-verve-plugin
 Description: Verve (command line) plugin for Xfce panel
  Verve plugin is a command line plugin for Xfce panel, with autocompletion
