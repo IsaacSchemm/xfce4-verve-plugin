@@ -1,3 +1,9 @@
+xfce4-verve-plugin-ddg (1.0.2.1) precise; urgency=low
+
+  * Added Startpage to the list
+
+ -- Isaac Schemm <isaacschemm@gmail.com>  Sat, 05 May 2012 20:41:47 -0500
+
 xfce4-verve-plugin-ddg (1.0.2) oneiric; urgency=low
 
   * Uploaded to PPA
