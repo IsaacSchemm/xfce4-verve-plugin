@@ -1,3 +1,9 @@
+xfce4-verve-plugin-ddg (1.0.3) precise; urgency=low
+
+  * Fixed use of quotes in search queries (by using g_strconcat and replacing xdg-open with sensible-browser)
+
+ -- Isaac Schemm <isaacschemm@gmail.com>  Tue, 15 May 2012 20:07:20 -0500
+
 xfce4-verve-plugin-ddg (1.0.2.1) precise; urgency=low
 
   * Added Startpage to the list

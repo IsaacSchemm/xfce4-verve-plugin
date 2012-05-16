@@ -200,7 +200,9 @@ verve_execute (const gchar *input,
     if (use_bang && verve_is_bang (input))
     {
       /* Launch DuckDuckGo */
-      command = g_strconcat ("verve-search-launcher https://duckduckgo.com/?q=", input, NULL);
+      gchar* esc_input = g_strescape(input, NULL);
+      command = g_strconcat ("verve-search-launcher https://duckduckgo.com/?q=", esc_input, NULL);
+      g_free(esc_input);
     }
     else
     {

@@ -3,5 +3,5 @@ LANGUAGE=$(echo $LANG|head -c 2)
 if [ "$LANGUAGE" = "C" ];then
 	LANGUAGE=en
 fi
-exo-open $(echo "$*" | sed -e 's/+/%2B/g' -e 's/ /+/g' -e "s/LANGUAGE/$LANGUAGE/g")
+sensible-browser $(echo "$*" | sed -e 's/+/%2B/g' -e 's/ /+/g' -e "s/LANGUAGE/$LANGUAGE/g")
 
