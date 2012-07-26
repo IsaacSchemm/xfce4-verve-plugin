@@ -94,7 +94,6 @@ verve_init (void)
   for (i=0; groups != NULL && groups[i] != NULL; ++i) {
     gchar* url = g_key_file_get_string(keyfile, groups[i], "url", NULL);
     gint id = g_key_file_get_integer(keyfile, groups[i], "id", NULL);
-    g_printf("%s: URL %s, ID %i\n", groups[i], url, id);
     g_hash_table_replace(engines,  id, url);
   }
   g_key_file_free(keyfile);
