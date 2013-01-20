@@ -1020,7 +1020,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_widget_show (hbox);
 
   /* !bang check box */
-  bang_button = gtk_check_button_new_with_label("Use DuckDuckGo when command starts with !");
+  bang_button = gtk_check_button_new_with_label("Use DuckDuckGo for commands\nstarting with !");
   gtk_box_pack_start (GTK_BOX (hbox), bang_button, FALSE, TRUE, 0);
   gtk_widget_show (bang_button);
 
@@ -1042,7 +1042,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_widget_show (hbox);
 
   /* smartbookmark check box */
-  smartbookmark_button = gtk_check_button_new_with_label("Use a smart bookmark");
+  smartbookmark_button = gtk_check_button_new_with_label("Instead of launching commands,\nuse this URL:");
   gtk_box_pack_start (GTK_BOX (hbox), smartbookmark_button, FALSE, TRUE, 0);
   gtk_widget_show (smartbookmark_button);
 
@@ -1053,10 +1053,10 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   g_signal_connect (smartbookmark_button, "toggled", G_CALLBACK (verve_plugin_smartbookmark_changed), verve);
 
   /* Seach engine selection label */
-  engine_label = gtk_label_new (_("Smart bookmark URL:"));
-  gtk_misc_set_alignment(engine_label, 0, 0.5); // align to the left
-  gtk_box_pack_start (GTK_BOX (hbox), engine_label, FALSE, TRUE, 0);
-  gtk_widget_show (engine_label);
+  //engine_label = gtk_label_new (_("Smart bookmark URL:"));
+  //gtk_misc_set_alignment(engine_label, 0, 0.5); // align to the left
+  //gtk_box_pack_start (GTK_BOX (hbox), engine_label, FALSE, TRUE, 0);
+  //gtk_widget_show (engine_label);
 
   /* Seach engine selection combo box */
   engine_box = gtk_entry_new();
