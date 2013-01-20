@@ -70,7 +70,7 @@ typedef struct
   gint              size;
   gint              history_length;
   gboolean          use_bang;
-  gint              search_engine;
+  gchar*            search_url;
 
 #ifdef HAVE_DBUS
   VerveDBusService *dbus_service;
@@ -523,7 +523,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->size = 20;
   verve->history_length = 25;
   verve->use_bang = TRUE;
-  verve->search_engine = 0;
+  verve->url = "http://www.example.com/?q=";
 
   /* Connect to load-binaries signal of environment */
   g_signal_connect (G_OBJECT (verve_env_get()), "load-binaries", G_CALLBACK (verve_plugin_load_completion), verve);
@@ -652,17 +652,17 @@ verve_plugin_update_bang (XfcePanelPlugin *plugin,
 
 
 static gboolean
-verve_plugin_update_search_engine (XfcePanelPlugin *plugin,
-                                    gint             search_engine,
+verve_plugin_update_url (XfcePanelPlugin *plugin,
+                                    gchar*           url,
                                     VervePlugin     *verve)
 {
   g_return_val_if_fail (verve != NULL, FALSE);
 
   /* Set internal search engine ID variable */
-  verve->search_engine = search_engine;
+  verve->url = url;
 
   /* Update panel */
-  verve_set_search_engine (search_engine);
+  verve_set_url (url);
 
   return TRUE;
 }
@@ -685,8 +685,8 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
   /* Default !bang setting */
   gboolean use_bang = TRUE;
 
-  /* Default search engine ID */
-  gint    search_engine = 0;
+  /* Default search engine URL */
+  gchar*    url = "https://duckduckgo.com/?q=";
 
   g_return_if_fail (plugin != NULL);
   g_return_if_fail (verve != NULL);
@@ -714,7 +714,7 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       use_bang = xfce_rc_read_bool_entry (rc, "use-bang", use_bang);
 
       /* Read search engine ID */
-      search_engine = xfce_rc_read_int_entry (rc, "search-engine", search_engine);
+      url = xfce_rc_read_int_entry (rc, "url", url);
     
       /* Update plugin size */
       verve_plugin_update_size (NULL, size, verve);
@@ -726,7 +726,7 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       verve_plugin_update_bang (NULL, use_bang, verve);
 
       /* Update search engine ID */
-      verve_plugin_update_search_engine (NULL, search_engine, verve);
+      verve_plugin_update_url (NULL, url, verve);
       
       /* Close handle */
       xfce_rc_close (rc);
@@ -770,7 +770,7 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
       xfce_rc_write_bool_entry (rc, "use-bang", verve->use_bang);
 
       /* Write search engine ID */
-      xfce_rc_write_int_entry (rc, "search-engine", verve->search_engine);
+      xfce_rc_write_int_entry (rc, "url", verve->url);
     
       /* Close handle */
       xfce_rc_close (rc);
@@ -819,32 +819,16 @@ verve_plugin_bang_changed (GtkToggleButton *button,
 
 
 static void
-verve_plugin_search_engine_changed (GtkComboBox *box, 
+verve_plugin_url_changed (GtkEntry *box, 
                            VervePlugin *verve)
 {
   g_return_if_fail (verve != NULL);
 
-  /* Load key file */
-  GKeyFile* keyfile = g_key_file_new();
-  g_key_file_load_from_file(keyfile, "/etc/verve-plugin-engines.conf", 0, NULL);
-
-  /* Get groups in an array */
-  gchar** groups = g_key_file_get_groups(keyfile, NULL);
-
-  /* Get the ID for the group matching the combo box's selected index */
-  gint index = gtk_combo_box_get_active(box);
-  gint id;
-  if (index == 0) {
-    id = 0;
-  } else {  
-    id = g_key_file_get_integer(keyfile, groups[index-1], "id", NULL);
-  }
-
-  /* Close key file */
-  g_key_file_free(keyfile);
+  /* Get the entered URL */
+  gchar* url = gtk_entry_get_text(box);
 
   /* Update search engine ID */
-  verve_plugin_update_search_engine (NULL, id, verve);
+  verve_plugin_update_url (NULL, url, verve);
 }
 
 
@@ -1006,9 +990,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_widget_show (engine_label);
 
   /* Seach engine selection combo box */
-  engine_box = gtk_combo_box_new_text();
-  gtk_combo_box_append_text(GTK_COMBO_BOX(engine_box), "No - launch local commands");
-  gtk_combo_box_set_active (GTK_COMBO_BOX (engine_box), 0);
+  engine_box = gtk_entry_new();
 
   /* Load key file */
   GKeyFile* keyfile = g_key_file_new();
@@ -1016,20 +998,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   /* Get groups in an array */
   gchar** groups = g_key_file_get_groups(keyfile, NULL);
   /* Loop through all search engines, also looking for the currently set ID */
-  gint current_id = verve->search_engine;
-  gboolean found_id = FALSE;
-  gint i;
-  for (i=0; groups != NULL && groups[i] != NULL; ++i) {
-    gchar* name = groups[i];
-    gtk_combo_box_append_text(GTK_COMBO_BOX(engine_box), name);
-    if (!found_id) {
-      gint id = g_key_file_get_integer(keyfile, groups[i], "id", NULL);
-      if (id == current_id) {
-        found_id = TRUE;
-        gtk_combo_box_set_active (GTK_COMBO_BOX (engine_box), i+1);
-      }
-    }
-  }
+  gtk_entry_set_text(engine_box, verve->url);
   /* Close key file */
   g_key_file_free(keyfile);
 
@@ -1038,7 +1007,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_widget_show (engine_box);
 
   /* Be notified when the user requests a different search engine setting */
-  g_signal_connect (engine_box, "changed", G_CALLBACK (verve_plugin_search_engine_changed), verve);
+  g_signal_connect (engine_box, "changed", G_CALLBACK (verve_plugin_url_changed), verve);
 
   /* Show properties dialog */
   gtk_widget_show (dialog);

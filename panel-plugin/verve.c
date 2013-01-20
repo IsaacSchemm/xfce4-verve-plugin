@@ -54,8 +54,7 @@ static gboolean verve_is_directory (const gchar *str);
 #define MATCH_BANG  "^!"
 
 static gboolean use_bang = TRUE;
-static gint search_engine = 0;
-GHashTable* engines; // a hash map to get a search engine URL using its ID
+static gchar* url;
 
 void
 verve_set_bang_setting (gboolean bang)
@@ -64,9 +63,9 @@ verve_set_bang_setting (gboolean bang)
 }
 
 void
-verve_set_search_engine (gint engine)
+verve_set_url (gchar* engine)
 {
-  search_engine = engine;
+  url = engine;
 }
 
 /*********************************************************************
@@ -84,19 +83,6 @@ verve_init (void)
 {
   /* Init history database */
   verve_history_init ();
-
-  /* Populate search engine hash map */
-  engines = g_hash_table_new_full(NULL, NULL, NULL, g_free);
-  GKeyFile* keyfile = g_key_file_new();
-  g_key_file_load_from_file(keyfile, "/etc/verve-plugin-engines.conf", 0, NULL);
-  gchar** groups = g_key_file_get_groups(keyfile, NULL);
-  gint i;
-  for (i=0; groups != NULL && groups[i] != NULL; ++i) {
-    gchar* url = g_key_file_get_string(keyfile, groups[i], "url", NULL);
-    gint id = g_key_file_get_integer(keyfile, groups[i], "id", NULL);
-    g_hash_table_replace(engines,  id, url);
-  }
-  g_key_file_free(keyfile);
 }
 
 
@@ -106,9 +92,6 @@ verve_shutdown (void)
 {
   /* Free history database */
   verve_history_shutdown ();
-
-  /* Depopulate hash map */
-  g_hash_table_destroy(engines);
 
   /* Shutdown environment */
   verve_env_shutdown ();
@@ -205,11 +188,10 @@ verve_execute (const gchar *input,
     }
     else
     {
-      gpointer result = g_hash_table_lookup(engines, search_engine);
-      if (result != NULL)
+      if (url != NULL)
       {
         /* Launch default search engine */
-        command = g_strconcat ("verve-search-launcher ", result, input, NULL);
+        command = g_strconcat ("verve-search-launcher ", url, input, NULL);
       }
       else
       {
