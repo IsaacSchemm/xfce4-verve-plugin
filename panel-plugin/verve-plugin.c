@@ -518,6 +518,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->plugin = plugin;
   
   /* Initialize completion variables */
+  // Note: this is where to set the defaults for when the properties box first appears, but it will not affect behavior if the properties box has not yet been opened.
   verve->history_current = NULL;
   verve->completion = g_completion_new (NULL);
   verve->n_complete = 0;
@@ -1027,6 +1028,12 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
 
   /* Be notified when the user requests a different !bang setting */
   g_signal_connect (bang_button, "toggled", G_CALLBACK (verve_plugin_bang_changed), verve);
+
+  /* Frame for smart bookmark settings */
+  frame = xfce_create_framebox (_("Smart Bookmarks"), &bin3);
+  gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 0);
+  gtk_widget_show (frame);
 
   /* smartbookmark check box */
   smartbookmark_button = gtk_check_button_new_with_label("Use a smart bookmark");
