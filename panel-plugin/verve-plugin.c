@@ -654,7 +654,7 @@ verve_plugin_update_bang (XfcePanelPlugin *plugin,
 
 static gboolean
 verve_plugin_update_smartbookmark (XfcePanelPlugin *plugin,
-                                    gboolean         use_bang,
+                                    gboolean         use_smartbookmark,
                                     VervePlugin     *verve)
 {
   g_return_val_if_fail (verve != NULL, FALSE);
@@ -705,10 +705,10 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
   gboolean use_bang = TRUE;
 
   /* Default smartbookmark setting */
-  gboolean use_smartbookmark = TRUE;
+  gboolean use_smartbookmark = FALSE;
 
   /* Default search engine URL */
-  gchar*    url = ""; // left blank = no search engine used
+  gchar*    url = "";
 
   g_return_if_fail (plugin != NULL);
   g_return_if_fail (verve != NULL);
