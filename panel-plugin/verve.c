@@ -3,7 +3,7 @@
  *
  *  Copyright  2006-2007  Jannis Pohlmann
  *  jannis@xfce.org
- *  DuckDuckGo support (C) 2012 Isaac Schemm
+ *  DuckDuckGo support (C) 2012-13 Isaac Schemm
  *  isaacschemm@gmail.com
  ****************************************************************************/
 

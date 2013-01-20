@@ -3,7 +3,7 @@
  *
  *  Copyright  2006-2007  Jannis Pohlmann
  *  jannis@xfce.org
- *  DuckDuckGo support (C) 2012 Isaac Schemm
+ *  DuckDuckGo support (C) 2012-13 Isaac Schemm
  *  isaacschemm@gmail.com
  ****************************************************************************/
 
@@ -714,7 +714,7 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       use_bang = xfce_rc_read_bool_entry (rc, "use-bang", use_bang);
 
       /* Read search engine ID */
-      url = xfce_rc_read_int_entry (rc, "url", url);
+      url = xfce_rc_read_entry (rc, "url", url);
     
       /* Update plugin size */
       verve_plugin_update_size (NULL, size, verve);
