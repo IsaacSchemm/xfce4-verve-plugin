@@ -65,7 +65,7 @@ verve_set_bang_setting (gboolean bang)
 void
 verve_set_url (gchar* engine)
 {
-  url = engine;
+  url = g_strdup(engine);
 }
 
 /*********************************************************************
@@ -188,7 +188,7 @@ verve_execute (const gchar *input,
     }
     else
     {
-      if (url != NULL)
+      if (url != NULL && strlen(url) > 0)
       {
         /* Launch default search engine */
         command = g_strconcat ("verve-search-launcher ", url, input, NULL);

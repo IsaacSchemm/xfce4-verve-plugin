@@ -70,7 +70,7 @@ typedef struct
   gint              size;
   gint              history_length;
   gboolean          use_bang;
-  gchar*            search_url;
+  gchar*            url;
 
 #ifdef HAVE_DBUS
   VerveDBusService *dbus_service;
@@ -523,7 +523,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->size = 20;
   verve->history_length = 25;
   verve->use_bang = TRUE;
-  verve->url = "http://www.example.com/?q=";
+  verve->url = "";
 
   /* Connect to load-binaries signal of environment */
   g_signal_connect (G_OBJECT (verve_env_get()), "load-binaries", G_CALLBACK (verve_plugin_load_completion), verve);
@@ -653,13 +653,13 @@ verve_plugin_update_bang (XfcePanelPlugin *plugin,
 
 static gboolean
 verve_plugin_update_url (XfcePanelPlugin *plugin,
-                                    gchar*           url,
+                                    const gchar*     url,
                                     VervePlugin     *verve)
 {
   g_return_val_if_fail (verve != NULL, FALSE);
 
   /* Set internal search engine ID variable */
-  verve->url = url;
+  verve->url = g_strdup(url);
 
   /* Update panel */
   verve_set_url (url);
@@ -770,7 +770,7 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
       xfce_rc_write_bool_entry (rc, "use-bang", verve->use_bang);
 
       /* Write search engine ID */
-      xfce_rc_write_int_entry (rc, "url", verve->url);
+      xfce_rc_write_entry (rc, "url", verve->url);
     
       /* Close handle */
       xfce_rc_close (rc);
@@ -825,7 +825,7 @@ verve_plugin_url_changed (GtkEntry *box,
   g_return_if_fail (verve != NULL);
 
   /* Get the entered URL */
-  gchar* url = gtk_entry_get_text(box);
+  const gchar* url = gtk_entry_get_text(box);
 
   /* Update search engine ID */
   verve_plugin_update_url (NULL, url, verve);
@@ -997,7 +997,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   g_key_file_load_from_file(keyfile, "/etc/verve-plugin-engines.conf", 0, NULL);
   /* Get groups in an array */
   gchar** groups = g_key_file_get_groups(keyfile, NULL);
-  /* Loop through all search engines, also looking for the currently set ID */
+  /* Set text to search engine URL */
   gtk_entry_set_text(engine_box, verve->url);
   /* Close key file */
   g_key_file_free(keyfile);
