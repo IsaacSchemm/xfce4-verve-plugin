@@ -1,8 +1,8 @@
-xfce4-verve-plugin-ddg (1.0.4+1.0.5b1) precise; urgency=low
+xfce4-verve-plugin-smartbookmark (1.0.5) precise; urgency=low
 
-  * Testing smartbookmark functionality
+  * Replaced search engine list with smartbookmark functionality
 
- -- Isaac Schemm <isaacschemm@gmail.com>  Sat, 19 Jan 2013 18:49:54 -0600
+ -- Isaac Schemm <isaacschemm@gmail.com>  Sat, 19 Jan 2013 20:09:57 -0600
 
 xfce4-verve-plugin-ddg (1.0.4) precise; urgency=low
 
