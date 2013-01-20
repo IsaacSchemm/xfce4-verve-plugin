@@ -910,6 +910,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkWidget *bin1;
   GtkWidget *bin2;
   GtkWidget *bin3;
+  GtkWidget *bin4;
   GtkWidget *hbox;
   GtkWidget *size_label;
   GtkWidget *size_spin;
@@ -1030,10 +1031,15 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   g_signal_connect (bang_button, "toggled", G_CALLBACK (verve_plugin_bang_changed), verve);
 
   /* Frame for smart bookmark settings */
-  frame = xfce_create_framebox (_("Smart Bookmarks"), &bin3);
+  frame = xfce_create_framebox (_("Smart Bookmarks"), &bin4);
   gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
+
+  /* Smart Bookmark container */
+  hbox = gtk_vbox_new (FALSE, 8);
+  gtk_container_add (GTK_CONTAINER (bin3), hbox);
+  gtk_widget_show (hbox);
 
   /* smartbookmark check box */
   smartbookmark_button = gtk_check_button_new_with_label("Use a smart bookmark");
