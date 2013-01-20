@@ -1061,15 +1061,8 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   /* Seach engine selection combo box */
   engine_box = gtk_entry_new();
 
-  /* Load key file */
-  GKeyFile* keyfile = g_key_file_new();
-  g_key_file_load_from_file(keyfile, "/etc/verve-plugin-engines.conf", 0, NULL);
-  /* Get groups in an array */
-  gchar** groups = g_key_file_get_groups(keyfile, NULL);
   /* Set text to search engine URL */
   gtk_entry_set_text(engine_box, verve->url);
-  /* Close key file */
-  g_key_file_free(keyfile);
 
   gtk_widget_add_mnemonic_label (engine_box, engine_label);
   gtk_box_pack_start (GTK_BOX (hbox), engine_box, FALSE, TRUE, 0);
