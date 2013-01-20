@@ -524,6 +524,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->size = 20;
   verve->history_length = 25;
   verve->use_bang = TRUE;
+  verve->use_smartbookmark = FALSE;
   verve->url = "";
 
   /* Connect to load-binaries signal of environment */
