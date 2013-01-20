@@ -1038,7 +1038,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
 
   /* Smart Bookmark container */
   hbox = gtk_vbox_new (FALSE, 8);
-  gtk_container_add (GTK_CONTAINER (bin3), hbox);
+  gtk_container_add (GTK_CONTAINER (bin4), hbox);
   gtk_widget_show (hbox);
 
   /* smartbookmark check box */
