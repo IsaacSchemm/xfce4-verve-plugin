@@ -54,12 +54,19 @@ static gboolean verve_is_directory (const gchar *str);
 #define MATCH_BANG  "^!"
 
 static gboolean use_bang = TRUE;
-static gchar* url;
+static gboolean use_smartbookmark = FALSE;
+static gchar* url = "";
 
 void
 verve_set_bang_setting (gboolean bang)
 {
   use_bang = bang;
+}
+
+void
+verve_set_smartbookmark_setting (gboolean smartbookmark)
+{
+  use_smartbookmark = smartbookmark;
 }
 
 void
@@ -188,9 +195,9 @@ verve_execute (const gchar *input,
     }
     else
     {
-      if (url != NULL && strlen(url) > 0)
+      if (use_smartbookmark)
       {
-        /* Launch default search engine */
+        /* Launch user-defined search engine */
         command = g_strconcat ("verve-search-launcher ", url, input, NULL);
       }
       else

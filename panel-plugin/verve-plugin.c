@@ -70,6 +70,7 @@ typedef struct
   gint              size;
   gint              history_length;
   gboolean          use_bang;
+  gboolean          use_smartbookmark;
   gchar*            url;
 
 #ifdef HAVE_DBUS
@@ -652,13 +653,31 @@ verve_plugin_update_bang (XfcePanelPlugin *plugin,
 
 
 static gboolean
+verve_plugin_update_smartbookmark (XfcePanelPlugin *plugin,
+                                    gboolean         use_bang,
+                                    VervePlugin     *verve)
+{
+  g_return_val_if_fail (verve != NULL, FALSE);
+
+  /* Set internal smartbookmark setting variable */
+  verve->use_smartbookmark = use_smartbookmark;
+
+  /* Update panel */
+  verve_set_smartbookmark_setting (use_smartbookmark);
+
+  return TRUE;
+}
+
+
+
+static gboolean
 verve_plugin_update_url (XfcePanelPlugin *plugin,
                                     const gchar*     url,
                                     VervePlugin     *verve)
 {
   g_return_val_if_fail (verve != NULL, FALSE);
 
-  /* Set internal search engine ID variable */
+  /* Set internal search engine URL variable */
   verve->url = g_strdup(url);
 
   /* Update panel */
@@ -685,8 +704,11 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
   /* Default !bang setting */
   gboolean use_bang = TRUE;
 
+  /* Default smartbookmark setting */
+  gboolean use_smartbookmark = TRUE;
+
   /* Default search engine URL */
-  gchar*    url = "https://duckduckgo.com/?q=";
+  gchar*    url = ""; // left blank = no search engine used
 
   g_return_if_fail (plugin != NULL);
   g_return_if_fail (verve != NULL);
@@ -713,6 +735,9 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       /* Read !bang setting */
       use_bang = xfce_rc_read_bool_entry (rc, "use-bang", use_bang);
 
+      /* Read smartbookmark setting */
+      use_smartbookmark = xfce_rc_read_bool_entry (rc, "use-smartbookmark", use_smartbookmark);
+
       /* Read search engine ID */
       url = xfce_rc_read_entry (rc, "url", url);
     
@@ -725,7 +750,10 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       /* Update !bang setting */
       verve_plugin_update_bang (NULL, use_bang, verve);
 
-      /* Update search engine ID */
+      /* Update smartbookmark setting */
+      verve_plugin_update_smartbookmark (NULL, use_smartbookmark, verve);
+
+      /* Update smartbookmark URL */
       verve_plugin_update_url (NULL, url, verve);
       
       /* Close handle */
@@ -768,6 +796,9 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
 
       /* Write !bang setting */
       xfce_rc_write_bool_entry (rc, "use-bang", verve->use_bang);
+
+      /* Write smartbookmark setting */
+      xfce_rc_write_bool_entry (rc, "use-smartbookmark", verve->use_smartbookmark);
 
       /* Write search engine ID */
       xfce_rc_write_entry (rc, "url", verve->url);
@@ -814,6 +845,18 @@ verve_plugin_bang_changed (GtkToggleButton *button,
 
   /* Update !bang setting */
   verve_plugin_update_bang (NULL, gtk_toggle_button_get_active(button), verve);
+}
+
+
+
+static void
+verve_plugin_smartbookmark_changed (GtkToggleButton *button, 
+                           VervePlugin *verve)
+{
+  g_return_if_fail (verve != NULL);
+
+  /* Update smartbookmark setting */
+  verve_plugin_update_smartbookmark (NULL, gtk_toggle_button_get_active(button), verve);
 }
 
 
@@ -872,6 +915,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkWidget *history_length_spin;
   GtkObject *adjustment;
   GtkWidget *bang_button;
+  GtkWidget *smartbookmark_button;
   GtkWidget *engine_label;
   GtkWidget *engine_box;
 
@@ -983,8 +1027,19 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   /* Be notified when the user requests a different !bang setting */
   g_signal_connect (bang_button, "toggled", G_CALLBACK (verve_plugin_bang_changed), verve);
 
+  /* smartbookmark check box */
+  smartbookmark_button = gtk_check_button_new_with_label("Use a smart bookmark");
+  gtk_box_pack_start (GTK_BOX (hbox), smartbookmark_button, FALSE, TRUE, 0);
+  gtk_widget_show (smartbookmark_button);
+
+  /* Assign current setting to smartbookmark check box */
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (smartbookmark_button), verve->use_smartbookmark);
+
+  /* Be notified when the user requests a different smartbookmark setting */
+  g_signal_connect (smartbookmark_button, "toggled", G_CALLBACK (verve_plugin_smartbookmark_changed), verve);
+
   /* Seach engine selection label */
-  engine_label = gtk_label_new (_("Use a search engine:"));
+  engine_label = gtk_label_new (_("Smart bookmark URL:"));
   gtk_misc_set_alignment(engine_label, 0, 0.5); // align to the left
   gtk_box_pack_start (GTK_BOX (hbox), engine_label, FALSE, TRUE, 0);
   gtk_widget_show (engine_label);
