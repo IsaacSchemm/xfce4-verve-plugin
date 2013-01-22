@@ -1,3 +1,9 @@
+xfce4-verve-plugin-smartbookmark (1.0.5+test1) precise; urgency=low
+
+  * Testing features
+
+ -- Isaac Schemm <isaacschemm@gmail.com>  Tue, 22 Jan 2013 17:34:35 -0600
+
 xfce4-verve-plugin-smartbookmark (1.0.5) precise; urgency=low
 
   * Replaced search engine list with smartbookmark functionality

@@ -917,6 +917,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkWidget *history_length_label;
   GtkWidget *history_length_spin;
   GtkObject *adjustment;
+  GtkWidget *ddg_label;
   GtkWidget *bang_button;
   GtkWidget *smartbookmark_button;
   GtkWidget *engine_label;
@@ -1019,8 +1020,13 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_container_add (GTK_CONTAINER (bin3), hbox);
   gtk_widget_show (hbox);
 
+  /* DuckDuckGo redirect options label */
+  ddg_label = gtk_label_new("Direct queries to DuckDuckGo if they start with:");  
+  gtk_box_pack_start (GTK_BOX (hbox), ddg_label, FALSE, TRUE, 0);
+  gtk_widget_show (ddg_label);
+
   /* !bang check box */
-  bang_button = gtk_check_button_new_with_label("Use DuckDuckGo for commands\nstarting with !");
+  bang_button = gtk_check_button_new_with_label("! (exclamation point)");
   gtk_box_pack_start (GTK_BOX (hbox), bang_button, FALSE, TRUE, 0);
   gtk_widget_show (bang_button);
 
