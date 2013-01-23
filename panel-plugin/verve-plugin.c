@@ -999,7 +999,8 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkWidget *bin2;
   GtkWidget *bin3;
   GtkWidget *bin4;
-  GtkWidget *hbox;
+  GtkWidget *hbox; // temporary pointer
+  GtkWidget *vbox; // temporary pointer
   GtkWidget *size_label;
   GtkWidget *size_spin;
   GtkWidget *label_label;
@@ -1044,10 +1045,15 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
-if FALSE {
+
+  /* Plugin size & label super-container */
+  vbox = gtk_vbox_new (FALSE, 8);
+  gtk_container_add (GTK_CONTAINER(bin1), vbox);
+  gtk_widget_show(vbox);  
+
   /* Plugin size container */
   hbox = gtk_hbox_new (FALSE, 8);
-  gtk_container_add (GTK_CONTAINER (bin1), hbox);
+  gtk_container_add (GTK_CONTAINER (vbox), hbox);
   gtk_widget_show (hbox);
 
   /* Plugin size label */
@@ -1069,10 +1075,10 @@ if FALSE {
 
   /* Be notified when the user requests a different plugin size */
   g_signal_connect (size_spin, "value-changed", G_CALLBACK (verve_plugin_size_changed), verve);
-}
+
   /* Plugin label container */
   hbox = gtk_hbox_new (FALSE, 8);
-  gtk_container_add (GTK_CONTAINER (bin1), hbox);
+  gtk_container_add (GTK_CONTAINER (vbox), hbox);
   gtk_widget_show (hbox);
 
   /* Plugin label label */
