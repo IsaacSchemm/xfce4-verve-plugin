@@ -57,6 +57,7 @@ static gboolean verve_is_directory (const gchar *str);
 static gboolean use_bang = TRUE;
 static gboolean use_backslash = FALSE;
 static gboolean use_smartbookmark = FALSE;
+/* URL for smartbookmark */
 static gchar* url = "";
 
 void
@@ -285,35 +286,6 @@ verve_is_url (const gchar *str)
 
 
 gboolean
-verve_is_email (const gchar *str)
-{
-  GString     *string = g_string_new (str);
-  const gchar *error;
-  pcre        *pattern;
-  int          error_offset;
-  int          ovector[30];
-  gboolean     success = FALSE;
-
-  /* Compile the pattern */
-  pattern = pcre_compile (MATCH_EMAIL, 0, &error, &error_offset, NULL);
-
-  /* Test whether the string matches this pattern */
-  if (pcre_exec (pattern, NULL, string->str, string->len, 0, 0, ovector, 30) >= 0)
-    success = TRUE;
-
-  /* Free pattern */
-  pcre_free (pattern);
-
-  /* Free string data */
-  g_string_free (string, TRUE);
-
-  /* Return whether the string matched any of the eMail patterns */
-  return success;
-}
-
-
-
-gboolean
 verve_is_directory (const gchar *str)
 {
   /* Avoid opening directories with the same name as an existing executable. */
@@ -360,6 +332,14 @@ verve_match_regex (const gchar *str, const gchar *regex)
 
   /* Return true if string matched the first pattern and there is no matching executable */
   return success;
+}
+
+
+
+gboolean
+verve_is_email (const gchar *str)
+{
+  return verve_match_regex(str, MATCH_EMAIL);
 }
 
 
