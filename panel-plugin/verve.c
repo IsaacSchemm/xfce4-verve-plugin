@@ -52,8 +52,10 @@ static gboolean verve_is_directory (const gchar *str);
                     "(/[-A-Za-z0-9_$.+!*(),;:@&=?/~#%]*[^]'.}>) \t\r\n,\\\"])?/?$"
 #define MATCH_EMAIL "^(mailto:)?[a-z0-9][a-z0-9.-]*@[a-z0-9][a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*)+$"
 #define MATCH_BANG  "^!"
+#define MATCH_BACKSLASH "^\\\\"
 
 static gboolean use_bang = TRUE;
+static gboolean use_backslash = FALSE;
 static gboolean use_smartbookmark = FALSE;
 static gchar* url = "";
 
@@ -61,6 +63,12 @@ void
 verve_set_bang_setting (gboolean bang)
 {
   use_bang = bang;
+}
+
+void
+verve_set_backslash_setting (gboolean backslash)
+{
+  use_backslash = backslash;
 }
 
 void
@@ -186,7 +194,7 @@ verve_execute (const gchar *input,
   }
   else
   {
-    if (use_bang && verve_is_bang (input))
+    if ((use_bang && verve_is_bang (input)) || (use_backslash && verve_is_backslash (input)))
     {
       /* Launch DuckDuckGo */
       gchar* esc_input = g_strescape(input, NULL);
@@ -321,7 +329,7 @@ verve_is_directory (const gchar *str)
 
 
 gboolean
-verve_is_bang (const gchar *str)
+verve_match_regex (const gchar *str, const gchar *regex)
 {
   GString     *string = g_string_new (str);
   pcre        *pattern;
@@ -331,7 +339,7 @@ verve_is_bang (const gchar *str)
   gboolean     success = FALSE;
 
   /* Compile pattern */
-  pattern = pcre_compile (MATCH_BANG, 0, &error, &error_offset, NULL);
+  pattern = pcre_compile (regex, 0, &error, &error_offset, NULL);
 
   /* Test whether the string matches this pattern */
   if (pcre_exec (pattern, NULL, string->str, string->len, 0, 0, ovector, 30) >= 0)
@@ -352,6 +360,22 @@ verve_is_bang (const gchar *str)
 
   /* Return true if string matched the first pattern and there is no matching executable */
   return success;
+}
+
+
+
+gboolean
+verve_is_bang(const gchar *str)
+{
+  return verve_match_regex(str, MATCH_BANG);
+}
+
+
+
+gboolean
+verve_is_backslash(const gchar *str)
+{
+  return verve_match_regex(str, MATCH_BACKSLASH);
 }
 
 
