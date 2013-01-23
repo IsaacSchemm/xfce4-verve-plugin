@@ -724,6 +724,21 @@ verve_plugin_update_url (XfcePanelPlugin *plugin,
 
 
 
+static gboolean
+verve_plugin_update_label (XfcePanelPlugin *plugin,
+                                    const gchar*     label,
+                                    VervePlugin     *verve)
+{
+  g_return_val_if_fail (verve != NULL, FALSE);
+
+  /* Set text in internal label object */
+  gtk_label_set_text(verve->label, label);
+
+  return TRUE;
+}
+
+
+
 static void
 verve_plugin_read_rc_file (XfcePanelPlugin *plugin, 
                            VervePlugin *verve)
@@ -937,6 +952,21 @@ verve_plugin_url_changed (GtkEntry *box,
 
 
 static void
+verve_plugin_label_changed (GtkEntry *box, 
+                           VervePlugin *verve)
+{
+  g_return_if_fail (verve != NULL);
+
+  /* Get the entered URL */
+  const gchar* label = gtk_entry_get_text(box);
+
+  /* Update search engine ID */
+  verve_plugin_update_label (NULL, label, verve);
+}
+
+
+
+static void
 verve_plugin_response (GtkWidget *dialog, 
                        int response, 
                        VervePlugin *verve)
@@ -972,6 +1002,8 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   GtkWidget *hbox;
   GtkWidget *size_label;
   GtkWidget *size_spin;
+  GtkWidget *label_label;
+  GtkWidget *label_box;
   GtkWidget *history_length_label;
   GtkWidget *history_length_spin;
   GtkObject *adjustment;
@@ -1012,7 +1044,7 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
   gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
-
+if FALSE {
   /* Plugin size container */
   hbox = gtk_hbox_new (FALSE, 8);
   gtk_container_add (GTK_CONTAINER (bin1), hbox);
@@ -1037,6 +1069,28 @@ verve_plugin_properties (XfcePanelPlugin *plugin,
 
   /* Be notified when the user requests a different plugin size */
   g_signal_connect (size_spin, "value-changed", G_CALLBACK (verve_plugin_size_changed), verve);
+}
+  /* Plugin label container */
+  hbox = gtk_hbox_new (FALSE, 8);
+  gtk_container_add (GTK_CONTAINER (bin1), hbox);
+  gtk_widget_show (hbox);
+
+  /* Plugin label label */
+  label_label = gtk_label_new (_("Label:"));
+  gtk_box_pack_start (GTK_BOX (hbox), label_label, FALSE, TRUE, 0);
+  gtk_widget_show (label_label);
+
+  /* Plugin label entry field */
+  label_box = gtk_entry_new();
+
+  /* Set text to current plugin label */
+  gtk_entry_set_text(label_box, gtk_label_get_text(verve->label));
+  gtk_widget_add_mnemonic_label (label_box, label_label);
+  gtk_box_pack_start (GTK_BOX (hbox), label_box, FALSE, TRUE, 0);
+  gtk_widget_show (label_box);
+
+  /* Be notified when the user requests a different search engine setting */
+  g_signal_connect (label_box, "changed", G_CALLBACK (verve_plugin_label_changed), verve);
 
   /* Frame for behaviour settings */
   frame = xfce_create_framebox (_("Behaviour"), &bin2);
