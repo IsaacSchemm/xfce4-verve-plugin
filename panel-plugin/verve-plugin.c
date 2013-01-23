@@ -54,6 +54,7 @@ typedef struct
 
   /* User interface */
   GtkWidget        *event_box;
+  GtkWidget        *label;
   GtkWidget        *input;
   
   /* Command history */
@@ -503,6 +504,8 @@ verve_plugin_keypress_cb (GtkWidget   *entry,
 static VervePlugin*
 verve_plugin_new (XfcePanelPlugin *plugin)
 {
+  GtkWidget *hbox;
+
   /* Set application name */
   g_set_application_name ("Verve");
 
@@ -540,11 +543,21 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->event_box = gtk_event_box_new ();
   gtk_widget_show (verve->event_box);
   
+  /* Create a container for the label and input */
+  hbox = gtk_hbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (verve->event_box), hbox);
+  gtk_widget_show (hbox);
+
+  /* Create the label */
+  verve->label = gtk_label_new ("Run: ");
+  gtk_widget_show (verve->label);
+  gtk_container_add (GTK_CONTAINER (hbox), verve->label);
+  
   /* Create the input entry */
   verve->input = gtk_entry_new ();
   gtk_entry_set_width_chars (GTK_ENTRY (verve->input), 20);
   gtk_widget_show (verve->input);
-  gtk_container_add (GTK_CONTAINER (verve->event_box), verve->input);
+  gtk_container_add (GTK_CONTAINER (hbox), verve->input);
 
   /* Handle mouse button and key press events */
   g_signal_connect (verve->input, "key-press-event", G_CALLBACK (verve_plugin_keypress_cb), verve);
