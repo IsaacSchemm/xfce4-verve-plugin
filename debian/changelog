@@ -1,9 +1,9 @@
 xfce4-verve-plugin-smartbookmark (1.0.6) precise; urgency=low
 
-  * Added new option to redirect commands beinning with a backslash to DuckDuckGo,
-	separate from the existing option for !bang commands
+  * Added new option to redirect commands beinning with a backslash to DuckDuckGo, separate from the existing option for !bang commands
+  * Added a label next to the main text entry box (set to an empty string by default)
 
- -- Isaac Schemm <isaacschemm@gmail.com>  Tue, 22 Jan 2013 18:26:06 -0600
+ -- Isaac Schemm <isaacschemm@gmail.com>  Tue, 22 Jan 2013 20:49:04 -0600
 
 xfce4-verve-plugin-smartbookmark (1.0.5) precise; urgency=low
 
