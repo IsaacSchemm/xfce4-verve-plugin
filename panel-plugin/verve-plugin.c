@@ -549,7 +549,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   gtk_widget_show (hbox);
 
   /* Create the label */
-  verve->label = gtk_label_new ("Run: ");
+  verve->label = gtk_label_new (gtk_label_get_text(verve->label));
   gtk_widget_show (verve->label);
   gtk_container_add (GTK_CONTAINER (hbox), verve->label);
   
@@ -749,6 +749,9 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
   /* Default size */
   gint    size = 20;
 
+  /* Default label */
+  gchar*  label = "";
+
   /* Default number of saved history entries */
   gint    history_length = 25;
 
@@ -783,6 +786,9 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       /* Read size value */
       size = xfce_rc_read_int_entry (rc, "size", size);
 
+      /* Read label text */
+      label = xfce_rc_read_entry (rc, "label", label);
+
       /* Read number of saved history entries */
       history_length = xfce_rc_read_int_entry (rc, "history-length", history_length);
 
@@ -795,11 +801,14 @@ verve_plugin_read_rc_file (XfcePanelPlugin *plugin,
       /* Read smartbookmark setting */
       use_smartbookmark = xfce_rc_read_bool_entry (rc, "use-smartbookmark", use_smartbookmark);
 
-      /* Read search engine ID */
+      /* Read smartbookmark URL */
       url = xfce_rc_read_entry (rc, "url", url);
     
       /* Update plugin size */
       verve_plugin_update_size (NULL, size, verve);
+    
+      /* Update label */
+      verve_plugin_update_label (NULL, label, verve);
 
       /* Update history length */
       verve_plugin_update_history_length (NULL, history_length, verve);
@@ -851,6 +860,9 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
       /* Write size value */
       xfce_rc_write_int_entry (rc, "size", verve->size);
 
+      /* Write label value */
+      xfce_rc_write_entry (rc, "label", gtk_label_get_text(verve->label));
+
       /* Write number of saved history entries */
       xfce_rc_write_int_entry (rc, "history-length", verve->history_length);
 
@@ -863,7 +875,7 @@ verve_plugin_write_rc_file (XfcePanelPlugin *plugin,
       /* Write smartbookmark setting */
       xfce_rc_write_bool_entry (rc, "use-smartbookmark", verve->use_smartbookmark);
 
-      /* Write search engine ID */
+      /* Write smartbookmark URL */
       xfce_rc_write_entry (rc, "url", verve->url);
     
       /* Close handle */
