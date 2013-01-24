@@ -522,7 +522,6 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->plugin = plugin;
   
   /* Initialize completion variables */
-  // Note: this is where to set the defaults for when the properties box first appears, but it will not affect behavior if the properties box has not yet been opened.
   verve->history_current = NULL;
   verve->completion = g_completion_new (NULL);
   verve->n_complete = 0;
@@ -532,6 +531,9 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   verve->use_backslash = FALSE;
   verve->use_smartbookmark = FALSE;
   verve->url = "";
+
+  /* Initialize label */
+  verve->label = gtk_label_new ("");
 
   /* Connect to load-binaries signal of environment */
   g_signal_connect (G_OBJECT (verve_env_get()), "load-binaries", G_CALLBACK (verve_plugin_load_completion), verve);
@@ -548,8 +550,7 @@ verve_plugin_new (XfcePanelPlugin *plugin)
   gtk_container_add (GTK_CONTAINER (verve->event_box), hbox);
   gtk_widget_show (hbox);
 
-  /* Create the label */
-  verve->label = gtk_label_new (gtk_label_get_text(verve->label));
+  /* Add the label */
   gtk_widget_show (verve->label);
   gtk_container_add (GTK_CONTAINER (hbox), verve->label);
   
