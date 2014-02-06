@@ -1,3 +1,9 @@
+xfce4-verve-plugin-smartbookmark (1.0.6.2) testing; urgency=low
+
+  * Merge debian packaging changes from xfce4-verve-plugin 1.0.0-2 (debian unstable).
+
+ -- Isaac Schemm <isaacschemm@gmail.com>  Thu, 06 Feb 2014 16:45:13 -0600
+
 xfce4-verve-plugin-smartbookmark (1.0.6.1) precise; urgency=low
 
   * Fixed bug when initializing plugin label

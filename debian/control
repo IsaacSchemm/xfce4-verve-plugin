@@ -2,11 +2,11 @@ Source: xfce4-verve-plugin-smartbookmark
 Section: xfce
 Priority: optional
 Maintainer: Isaac Schemm <isaacschemm@gmail.com>
-Build-Depends: debhelper (>= 7), autotools-dev,
- libexo-1-dev (>= 0.5.0), xfce4-panel-dev (>= 4.8.0), libpcre3-dev,
- libstartup-notification0-dev, libxml-parser-perl, libdbus-glib-1-dev,
- intltool, libxfcegui4-dev, xfce4-dev-tools, libtool, hardening-includes
-Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 9), autotools-dev,
+ libexo-1-dev, xfce4-panel-dev, libpcre3-dev, libstartup-notification0-dev,
+ libxml-parser-perl, libdbus-glib-1-dev, intltool, libxfcegui4-dev,
+ xfce4-dev-tools, libtool
+Standards-Version: 3.9.4
 Vcs-Svn: git://github.com/IsaacSchemm/xfce4-verve-plugin.git
 Vcs-Browser: https://github.com/IsaacSchemm/xfce4-verve-plugin
 
